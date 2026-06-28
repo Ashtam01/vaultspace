@@ -4,15 +4,33 @@ import { relations } from "drizzle-orm"
 import { UserTable } from "./user"
 import { ProjectTable } from "./project"
 
-export const documentStatuses = ["draft", "published", "archived"] as const
+export const documentStatuses = [
+  "draft",
+  "review",
+  "published",
+  "archived",
+] as const
 export type DocumentStatus = (typeof documentStatuses)[number]
 export const documentStatusEnum = pgEnum("document_status", documentStatuses)
+
+export const documentSensitivities = [
+  "public",
+  "internal",
+  "confidential",
+  "restricted",
+] as const
+export type DocumentSensitivity = (typeof documentSensitivities)[number]
+export const documentSensitivityEnum = pgEnum(
+  "document_sensitivity",
+  documentSensitivities,
+)
 
 export const DocumentTable = pgTable("documents", {
   id,
   title: text().notNull(),
   content: text().notNull(),
   status: documentStatusEnum().notNull().default("draft"),
+  sensitivity: documentSensitivityEnum().notNull().default("public"),
   isLocked: boolean().notNull().default(false),
   projectId: uuid()
     .notNull()
