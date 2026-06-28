@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "VaultSpace",
   description:
     "Multi-tenant team workspace with enterprise-grade RBAC, ABAC, and ReBAC permissions",
+  icons: {
+    icon: "/favicon.ico",
+  },
 }
 
 export default function RootLayout({

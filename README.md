@@ -1,4 +1,8 @@
-# 🔐 VaultSpace
+<p align="center">
+  <img src="public/letter-v.svg" width="128" height="128" alt="VaultSpace Logo" />
+</p>
+
+<h1 align="center">🔐 VaultSpace</h1>
 
 A multi-tenant team workspace with **enterprise-grade permissions** — demonstrating RBAC, ABAC, and ReBAC in a real Next.js application.
 

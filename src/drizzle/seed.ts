@@ -28,50 +28,50 @@ async function seed() {
     .insert(UserTable)
     .values([
       {
-        email: "alice@vaultspace.io",
-        name: "Alice Chen",
+        email: "ashtam@vaultspace.io",
+        name: "Ashtam",
         role: "admin",
         department: "Engineering",
       },
       {
-        email: "bob@vaultspace.io",
-        name: "Bob Martinez",
+        email: "abhinav@vaultspace.io",
+        name: "Abhinav",
         role: "author",
         department: "Engineering",
       },
       {
-        email: "charlie@vaultspace.io",
-        name: "Charlie Kim",
+        email: "kirtiman@vaultspace.io",
+        name: "Kirtiman",
         role: "editor",
         department: "Engineering",
       },
       {
-        email: "diana@vaultspace.io",
-        name: "Diana Patel",
+        email: "nikunj@vaultspace.io",
+        name: "Nikunj",
         role: "viewer",
         department: "Engineering",
       },
       {
-        email: "eve@vaultspace.io",
-        name: "Eve Nakamura",
+        email: "tanish@vaultspace.io",
+        name: "Tanish",
         role: "admin",
         department: "Marketing",
       },
       {
-        email: "frank@vaultspace.io",
-        name: "Frank Okafor",
+        email: "neha@vaultspace.io",
+        name: "Neha",
         role: "author",
         department: "Marketing",
       },
       {
-        email: "grace@vaultspace.io",
-        name: "Grace Liu",
+        email: "anusha@vaultspace.io",
+        name: "Anusha",
         role: "editor",
         department: "Marketing",
       },
       {
-        email: "henry@vaultspace.io",
-        name: "Henry Wilson",
+        email: "kajal@vaultspace.io",
+        name: "Kajal",
         role: "viewer",
         department: "Marketing",
       },
@@ -89,12 +89,12 @@ async function seed() {
       {
         name: "Acme Corp",
         slug: "acme-corp",
-        createdById: getUser("alice@vaultspace.io").id,
+        createdById: getUser("ashtam@vaultspace.io").id,
       },
       {
         name: "Side Project Labs",
         slug: "side-project-labs",
-        createdById: getUser("eve@vaultspace.io").id,
+        createdById: getUser("tanish@vaultspace.io").id,
       },
     ])
     .returning()
@@ -108,67 +108,67 @@ async function seed() {
   const sideLabs = getWorkspace("side-project-labs")
 
   // ─── Workspace Members ────────────────────────────────────────
-  // Key conflict scenario: Alice is OWNER in Acme but GUEST in Side Project Labs
-  // Eve is OWNER in Side Project Labs but ADMIN in Acme
+  // Key conflict scenario: Ashtam is OWNER in Acme but GUEST in Side Project Labs
+  // Tanish is OWNER in Side Project Labs but ADMIN in Acme
   const workspaceMembers = await db
     .insert(WorkspaceMemberTable)
     .values([
       // Acme Corp members
       {
         workspaceId: acme.id,
-        userId: getUser("alice@vaultspace.io").id,
+        userId: getUser("ashtam@vaultspace.io").id,
         role: "owner",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("bob@vaultspace.io").id,
+        userId: getUser("abhinav@vaultspace.io").id,
         role: "admin",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("charlie@vaultspace.io").id,
+        userId: getUser("kirtiman@vaultspace.io").id,
         role: "member",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("diana@vaultspace.io").id,
+        userId: getUser("nikunj@vaultspace.io").id,
         role: "member",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("eve@vaultspace.io").id,
+        userId: getUser("tanish@vaultspace.io").id,
         role: "admin",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("frank@vaultspace.io").id,
+        userId: getUser("neha@vaultspace.io").id,
         role: "member",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("grace@vaultspace.io").id,
+        userId: getUser("anusha@vaultspace.io").id,
         role: "member",
       },
       {
         workspaceId: acme.id,
-        userId: getUser("henry@vaultspace.io").id,
+        userId: getUser("kajal@vaultspace.io").id,
         role: "guest",
       },
 
       // Side Project Labs members (subset — tests multi-tenant isolation)
       {
         workspaceId: sideLabs.id,
-        userId: getUser("eve@vaultspace.io").id,
+        userId: getUser("tanish@vaultspace.io").id,
         role: "owner",
       },
       {
         workspaceId: sideLabs.id,
-        userId: getUser("frank@vaultspace.io").id,
+        userId: getUser("neha@vaultspace.io").id,
         role: "admin",
       },
       {
         workspaceId: sideLabs.id,
-        userId: getUser("alice@vaultspace.io").id,
+        userId: getUser("ashtam@vaultspace.io").id,
         role: "guest",
       },
     ])
@@ -222,58 +222,58 @@ async function seed() {
       // Platform Team
       {
         teamId: platformTeam.id,
-        userId: getUser("alice@vaultspace.io").id,
+        userId: getUser("ashtam@vaultspace.io").id,
         role: "lead",
       },
       {
         teamId: platformTeam.id,
-        userId: getUser("bob@vaultspace.io").id,
+        userId: getUser("abhinav@vaultspace.io").id,
         role: "member",
       },
       {
         teamId: platformTeam.id,
-        userId: getUser("charlie@vaultspace.io").id,
+        userId: getUser("kirtiman@vaultspace.io").id,
         role: "member",
       },
 
       // Growth Team
       {
         teamId: growthTeam.id,
-        userId: getUser("eve@vaultspace.io").id,
+        userId: getUser("tanish@vaultspace.io").id,
         role: "lead",
       },
       {
         teamId: growthTeam.id,
-        userId: getUser("frank@vaultspace.io").id,
+        userId: getUser("neha@vaultspace.io").id,
         role: "member",
       },
       {
         teamId: growthTeam.id,
-        userId: getUser("grace@vaultspace.io").id,
+        userId: getUser("anusha@vaultspace.io").id,
         role: "member",
       },
 
       // Design Team — cross-functional
       {
         teamId: designTeam.id,
-        userId: getUser("diana@vaultspace.io").id,
+        userId: getUser("nikunj@vaultspace.io").id,
         role: "lead",
       },
       {
         teamId: designTeam.id,
-        userId: getUser("grace@vaultspace.io").id,
+        userId: getUser("anusha@vaultspace.io").id,
         role: "member",
       },
 
       // Research Team (Side Project Labs)
       {
         teamId: researchTeam.id,
-        userId: getUser("eve@vaultspace.io").id,
+        userId: getUser("tanish@vaultspace.io").id,
         role: "lead",
       },
       {
         teamId: researchTeam.id,
-        userId: getUser("frank@vaultspace.io").id,
+        userId: getUser("neha@vaultspace.io").id,
         role: "member",
       },
     ])
@@ -289,7 +289,7 @@ async function seed() {
       {
         name: "API Documentation",
         description: "Technical documentation for our REST API",
-        ownerId: getUser("alice@vaultspace.io").id,
+        ownerId: getUser("ashtam@vaultspace.io").id,
         department: "Engineering",
         workspaceId: acme.id,
         teamId: platformTeam.id,
@@ -297,8 +297,8 @@ async function seed() {
       },
       {
         name: "System Architecture",
-        description: "High-level system design documents",
-        ownerId: getUser("alice@vaultspace.io").id,
+        description: "High-ltanishl system design documents",
+        ownerId: getUser("ashtam@vaultspace.io").id,
         department: "Engineering",
         workspaceId: acme.id,
         teamId: platformTeam.id,
@@ -309,7 +309,7 @@ async function seed() {
       {
         name: "Brand Guidelines",
         description: "Company branding and style guide",
-        ownerId: getUser("eve@vaultspace.io").id,
+        ownerId: getUser("tanish@vaultspace.io").id,
         department: "Marketing",
         workspaceId: acme.id,
         teamId: growthTeam.id,
@@ -318,7 +318,7 @@ async function seed() {
       {
         name: "Campaign Plans",
         description: "Marketing campaign strategies and plans",
-        ownerId: getUser("eve@vaultspace.io").id,
+        ownerId: getUser("tanish@vaultspace.io").id,
         department: "Marketing",
         workspaceId: acme.id,
         teamId: growthTeam.id,
@@ -329,7 +329,7 @@ async function seed() {
       {
         name: "Company Wiki",
         description: "General knowledge base for all departments",
-        ownerId: getUser("alice@vaultspace.io").id,
+        ownerId: getUser("ashtam@vaultspace.io").id,
         department: null,
         workspaceId: acme.id,
         teamId: null,
@@ -340,7 +340,7 @@ async function seed() {
       {
         name: "Experimental Features",
         description: "Prototypes and proof-of-concept work",
-        ownerId: getUser("eve@vaultspace.io").id,
+        ownerId: getUser("tanish@vaultspace.io").id,
         department: "Engineering",
         workspaceId: sideLabs.id,
         teamId: researchTeam.id,
@@ -366,8 +366,8 @@ async function seed() {
         sensitivity: "public",
         isLocked: false,
         projectId: getProject("API Documentation").id,
-        creatorId: getUser("bob@vaultspace.io").id,
-        lastEditedById: getUser("charlie@vaultspace.io").id,
+        creatorId: getUser("abhinav@vaultspace.io").id,
+        lastEditedById: getUser("kirtiman@vaultspace.io").id,
       },
       {
         title: "Authentication Flow",
@@ -377,8 +377,8 @@ async function seed() {
         sensitivity: "internal",
         isLocked: false,
         projectId: getProject("API Documentation").id,
-        creatorId: getUser("bob@vaultspace.io").id,
-        lastEditedById: getUser("bob@vaultspace.io").id,
+        creatorId: getUser("abhinav@vaultspace.io").id,
+        lastEditedById: getUser("abhinav@vaultspace.io").id,
       },
       {
         title: "API v1 Reference (Deprecated)",
@@ -388,8 +388,8 @@ async function seed() {
         sensitivity: "internal",
         isLocked: true,
         projectId: getProject("API Documentation").id,
-        creatorId: getUser("alice@vaultspace.io").id,
-        lastEditedById: getUser("alice@vaultspace.io").id,
+        creatorId: getUser("ashtam@vaultspace.io").id,
+        lastEditedById: getUser("ashtam@vaultspace.io").id,
       },
       {
         title: "Security Incident Response",
@@ -399,8 +399,8 @@ async function seed() {
         sensitivity: "restricted",
         isLocked: true,
         projectId: getProject("API Documentation").id,
-        creatorId: getUser("alice@vaultspace.io").id,
-        lastEditedById: getUser("alice@vaultspace.io").id,
+        creatorId: getUser("ashtam@vaultspace.io").id,
+        lastEditedById: getUser("ashtam@vaultspace.io").id,
       },
 
       // System Architecture
@@ -412,32 +412,32 @@ async function seed() {
         sensitivity: "confidential",
         isLocked: false,
         projectId: getProject("System Architecture").id,
-        creatorId: getUser("bob@vaultspace.io").id,
-        lastEditedById: getUser("bob@vaultspace.io").id,
+        creatorId: getUser("abhinav@vaultspace.io").id,
+        lastEditedById: getUser("abhinav@vaultspace.io").id,
       },
       {
         title: "Microservices Overview",
         content:
-          "# Microservices\n\nOur service architecture follows domain-driven design principles with event-driven communication.",
+          "# Microservices\n\nOur service architecture follows domain-driven design principles with tanishnt-driven communication.",
         status: "published",
         sensitivity: "internal",
         isLocked: false,
         projectId: getProject("System Architecture").id,
-        creatorId: getUser("bob@vaultspace.io").id,
-        lastEditedById: getUser("charlie@vaultspace.io").id,
+        creatorId: getUser("abhinav@vaultspace.io").id,
+        lastEditedById: getUser("kirtiman@vaultspace.io").id,
       },
 
       // Brand Guidelines
       {
         title: "Logo Usage",
         content:
-          "# Logo Guidelines\n\nThe VaultSpace logo must maintain minimum padding of 24px. Never stretch, rotate, or recolor the logo.",
+          "# Logo Guidelines\n\nThe VaultSpace logo must maintain minimum padding of 24px. Ntanishr stretch, rotate, or recolor the logo.",
         status: "published",
         sensitivity: "public",
         isLocked: false,
         projectId: getProject("Brand Guidelines").id,
-        creatorId: getUser("frank@vaultspace.io").id,
-        lastEditedById: getUser("grace@vaultspace.io").id,
+        creatorId: getUser("neha@vaultspace.io").id,
+        lastEditedById: getUser("anusha@vaultspace.io").id,
       },
       {
         title: "Color Palette",
@@ -447,8 +447,8 @@ async function seed() {
         sensitivity: "public",
         isLocked: true,
         projectId: getProject("Brand Guidelines").id,
-        creatorId: getUser("eve@vaultspace.io").id,
-        lastEditedById: getUser("eve@vaultspace.io").id,
+        creatorId: getUser("tanish@vaultspace.io").id,
+        lastEditedById: getUser("tanish@vaultspace.io").id,
       },
       {
         title: "Typography Guide",
@@ -458,21 +458,21 @@ async function seed() {
         sensitivity: "public",
         isLocked: false,
         projectId: getProject("Brand Guidelines").id,
-        creatorId: getUser("frank@vaultspace.io").id,
-        lastEditedById: getUser("frank@vaultspace.io").id,
+        creatorId: getUser("neha@vaultspace.io").id,
+        lastEditedById: getUser("neha@vaultspace.io").id,
       },
 
       // Campaign Plans
       {
         title: "Q1 2026 Campaign",
         content:
-          "# Q1 Campaign\n\nTargeting developer communities with content marketing and conference sponsorships.",
+          "# Q1 Campaign\n\nTargeting dtanishloper communities with content marketing and conference sponsorships.",
         status: "published",
         sensitivity: "internal",
         isLocked: false,
         projectId: getProject("Campaign Plans").id,
-        creatorId: getUser("frank@vaultspace.io").id,
-        lastEditedById: getUser("grace@vaultspace.io").id,
+        creatorId: getUser("neha@vaultspace.io").id,
+        lastEditedById: getUser("anusha@vaultspace.io").id,
       },
       {
         title: "Competitor Analysis",
@@ -482,8 +482,8 @@ async function seed() {
         sensitivity: "confidential",
         isLocked: false,
         projectId: getProject("Campaign Plans").id,
-        creatorId: getUser("eve@vaultspace.io").id,
-        lastEditedById: getUser("eve@vaultspace.io").id,
+        creatorId: getUser("tanish@vaultspace.io").id,
+        lastEditedById: getUser("tanish@vaultspace.io").id,
       },
       {
         title: "Q4 2025 Retrospective",
@@ -493,8 +493,8 @@ async function seed() {
         sensitivity: "internal",
         isLocked: false,
         projectId: getProject("Campaign Plans").id,
-        creatorId: getUser("eve@vaultspace.io").id,
-        lastEditedById: getUser("eve@vaultspace.io").id,
+        creatorId: getUser("tanish@vaultspace.io").id,
+        lastEditedById: getUser("tanish@vaultspace.io").id,
       },
 
       // Company Wiki
@@ -506,8 +506,8 @@ async function seed() {
         sensitivity: "public",
         isLocked: false,
         projectId: getProject("Company Wiki").id,
-        creatorId: getUser("alice@vaultspace.io").id,
-        lastEditedById: getUser("alice@vaultspace.io").id,
+        creatorId: getUser("ashtam@vaultspace.io").id,
+        lastEditedById: getUser("ashtam@vaultspace.io").id,
       },
       {
         title: "Employee Handbook",
@@ -517,8 +517,8 @@ async function seed() {
         sensitivity: "internal",
         isLocked: false,
         projectId: getProject("Company Wiki").id,
-        creatorId: getUser("eve@vaultspace.io").id,
-        lastEditedById: getUser("grace@vaultspace.io").id,
+        creatorId: getUser("tanish@vaultspace.io").id,
+        lastEditedById: getUser("anusha@vaultspace.io").id,
       },
       {
         title: "Board Meeting Notes",
@@ -528,8 +528,8 @@ async function seed() {
         sensitivity: "restricted",
         isLocked: true,
         projectId: getProject("Company Wiki").id,
-        creatorId: getUser("alice@vaultspace.io").id,
-        lastEditedById: getUser("alice@vaultspace.io").id,
+        creatorId: getUser("ashtam@vaultspace.io").id,
+        lastEditedById: getUser("ashtam@vaultspace.io").id,
       },
 
       // Side Project Labs — Experimental Features
@@ -541,8 +541,8 @@ async function seed() {
         sensitivity: "confidential",
         isLocked: false,
         projectId: getProject("Experimental Features").id,
-        creatorId: getUser("eve@vaultspace.io").id,
-        lastEditedById: getUser("eve@vaultspace.io").id,
+        creatorId: getUser("tanish@vaultspace.io").id,
+        lastEditedById: getUser("tanish@vaultspace.io").id,
       },
     ])
     .returning()
@@ -559,9 +559,9 @@ async function seed() {
   console.log(`   - Projects: ${projects.length}`)
   console.log(`   - Documents: ${documents.length}`)
   console.log("\n🔑 Key conflict scenarios seeded:")
-  console.log("   - Alice: OWNER in Acme, GUEST in Side Project Labs")
-  console.log("   - Eve: OWNER in Side Project Labs, ADMIN in Acme")
-  console.log("   - Henry: GUEST in Acme (not in Side Project Labs)")
+  console.log("   - Ashtam: OWNER in Acme, GUEST in Side Project Labs")
+  console.log("   - Tanish: OWNER in Side Project Labs, ADMIN in Acme")
+  console.log("   - Kajal: GUEST in Acme (not in Side Project Labs)")
   console.log(
     '   - Documents with sensitivity: public → restricted across projects',
   )
