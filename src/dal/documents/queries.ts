@@ -18,6 +18,7 @@ export async function getProjectDocuments(
       title: DocumentTable.title,
       status: DocumentTable.status,
       isLocked: DocumentTable.isLocked,
+      sensitivity: DocumentTable.sensitivity,
       createdAt: DocumentTable.createdAt,
       creator: {
         id: UserTable.id,

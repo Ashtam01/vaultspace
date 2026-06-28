@@ -5,9 +5,7 @@ import { getUsers } from "@/dal/users/queries"
 
 export default async function LoginPage() {
   const currentUser = await getCurrentUser()
-
-  if (currentUser) redirect("/projects")
-
+  if (currentUser) redirect("/workspaces")
   const users = await getUsers()
 
   const engineeringUsers = users.filter(u => u.department === "Engineering")

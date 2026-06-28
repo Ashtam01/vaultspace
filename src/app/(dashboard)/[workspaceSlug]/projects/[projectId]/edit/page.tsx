@@ -13,28 +13,34 @@ import {
 } from "@/components/ui/card"
 import { ProjectForm } from "@/components/project-form"
 import { getProjectByIdService } from "@/services/projects"
-import { getUserPermissions } from "@/permissions/casl"
+import { getUserWorkspacePermissions } from "@/permissions/casl"
+import { getWorkspaceBySlugService } from "@/services/workspace"
 import { subject } from "@casl/ability"
 
 export default async function EditProjectPage({
   params,
-}: PageProps<"/projects/[projectId]/edit">) {
-  const { projectId } = await params
+}: {
+  params: Promise<{ workspaceSlug: string; projectId: string }>
+}) {
+  const { workspaceSlug, projectId } = await params
+  
+  const workspace = await getWorkspaceBySlugService(workspaceSlug)
+  if (!workspace) return redirect("/workspaces")
 
-  const project = await getProjectByIdService(projectId)
+  const project = await getProjectByIdService(workspace.id, projectId)
   if (project == null) return notFound()
 
   // PERMISSION:
-  const permissions = await getUserPermissions()
+  const permissions = await getUserWorkspacePermissions(workspace.id)
   if (!permissions.can("update", subject("project", { ...project }))) {
-    return redirect(`/`)
+    return redirect(`/${workspaceSlug}/projects/${projectId}`)
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href={`/projects/${projectId}`}>
+          <Link href={`/${workspaceSlug}/projects/${projectId}`}>
             <ArrowLeftIcon className="size-4" />
             <span className="sr-only">Back to project</span>
           </Link>
@@ -46,7 +52,7 @@ export default async function EditProjectPage({
       </div>
 
       <div className="max-w-2xl space-y-6">
-        <ProjectForm project={project} />
+        <ProjectForm workspaceSlug={workspaceSlug} project={project} />
 
         {/* PERMISSION: */}
         {permissions.can("delete", subject("project", { ...project })) && (
@@ -61,7 +67,7 @@ export default async function EditProjectPage({
               <ActionButton
                 variant="destructive"
                 requireAreYouSure
-                action={deleteProjectAction.bind(null, projectId)}
+                action={deleteProjectAction.bind(null, workspaceSlug, projectId)}
               >
                 Delete Project
               </ActionButton>

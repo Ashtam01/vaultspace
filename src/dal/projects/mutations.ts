@@ -6,7 +6,7 @@ export async function createProject(data: ProjectInsertData) {
   const [project] = await db
     .insert(ProjectTable)
     .values(data)
-    .returning({ id: ProjectTable.id })
+    .returning()
 
   return project
 }

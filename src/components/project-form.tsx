@@ -14,32 +14,41 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { projectSchema, type ProjectFormValues } from "@/schemas/projects"
 import { Project } from "@/drizzle/schema"
 import { createProjectAction, updateProjectAction } from "@/actions/projects"
 import { toast } from "sonner"
 
 type ProjectFormProps = {
-  project?: Pick<Project, "id" | "name" | "description" | "department">
+  workspaceSlug: string
+  project?: Pick<Project, "id" | "name" | "description" | "department" | "visibility">
 }
 
-export function ProjectForm({ project }: ProjectFormProps) {
+export function ProjectForm({ workspaceSlug, project }: ProjectFormProps) {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: project?.name ?? "",
       description: project?.description ?? "",
       department: project?.department ?? "",
+      visibility: project?.visibility ?? "workspace",
     },
   })
 
   async function handleSubmit(data: ProjectFormValues) {
     const action = project
-      ? updateProjectAction.bind(null, project.id)
-      : createProjectAction
+      ? updateProjectAction.bind(null, workspaceSlug, project.id)
+      : createProjectAction.bind(null, workspaceSlug)
 
     const res = await action(data)
-    toast.error(res.message)
+    toast.error(res?.message || "An error occurred")
   }
 
   return (
@@ -48,7 +57,7 @@ export function ProjectForm({ project }: ProjectFormProps) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
+            className="space-y-6 pt-6"
           >
             <FormField
               control={form.control}
@@ -73,6 +82,29 @@ export function ProjectForm({ project }: ProjectFormProps) {
                   <FormControl>
                     <Textarea rows={4} {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="visibility"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Visibility</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select visibility" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="team">Team Only</SelectItem>
+                      <SelectItem value="workspace">Workspace (All Members)</SelectItem>
+                      <SelectItem value="public">Public</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

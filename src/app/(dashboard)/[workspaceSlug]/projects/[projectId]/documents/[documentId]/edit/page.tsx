@@ -5,31 +5,37 @@ import { ArrowLeftIcon } from "lucide-react"
 import { DocumentForm } from "@/components/document-form"
 import { getDocumentByIdService } from "@/services/document"
 import { getProjectByIdService } from "@/services/projects"
-import { getUserPermissions } from "@/permissions/casl"
+import { getUserWorkspacePermissions } from "@/permissions/casl"
+import { getWorkspaceBySlugService } from "@/services/workspace"
 import { subject } from "@casl/ability"
 
 export default async function EditDocumentPage({
   params,
-}: PageProps<"/projects/[projectId]/documents/[documentId]/edit">) {
-  const { projectId, documentId } = await params
+}: {
+  params: Promise<{ workspaceSlug: string; projectId: string; documentId: string }>
+}) {
+  const { workspaceSlug, projectId, documentId } = await params
+  
+  const workspace = await getWorkspaceBySlugService(workspaceSlug)
+  if (!workspace) return redirect("/workspaces")
 
-  const document = await getDocumentByIdService(documentId)
+  const document = await getDocumentByIdService(workspace.id, documentId)
   if (document == null) return notFound()
 
-  const project = await getProjectByIdService(projectId)
+  const project = await getProjectByIdService(workspace.id, projectId)
   if (project == null) return notFound()
 
   // PERMISSION:
-  const permissions = await getUserPermissions()
+  const permissions = await getUserWorkspacePermissions(workspace.id)
   if (!permissions.can("update", subject("document", { ...document }))) {
-    return redirect(`/`)
+    return redirect(`/${workspaceSlug}/projects/${projectId}/documents/${documentId}`)
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href={`/projects/${projectId}/documents/${documentId}`}>
+          <Link href={`/${workspaceSlug}/projects/${projectId}/documents/${documentId}`}>
             <ArrowLeftIcon className="size-4" />
             <span className="sr-only">Back to document</span>
           </Link>
@@ -42,6 +48,7 @@ export default async function EditDocumentPage({
 
       <div className="max-w-2xl">
         <DocumentForm
+          workspaceSlug={workspaceSlug}
           document={document}
           projectId={projectId}
           canModify={{

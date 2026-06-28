@@ -3,20 +3,29 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon } from "lucide-react"
 import { ProjectForm } from "@/components/project-form"
 import { redirect } from "next/navigation"
-import { getUserPermissions } from "@/permissions/casl"
+import { getUserWorkspacePermissions } from "@/permissions/casl"
+import { getWorkspaceBySlugService } from "@/services/workspace"
 
-export default async function NewProjectPage() {
+export default async function NewProjectPage({
+  params,
+}: {
+  params: Promise<{ workspaceSlug: string }>
+}) {
+  const { workspaceSlug } = await params
+  const workspace = await getWorkspaceBySlugService(workspaceSlug)
+  if (!workspace) return redirect("/workspaces")
+
   // PERMISSION:
-  const permissions = await getUserPermissions()
+  const permissions = await getUserWorkspacePermissions(workspace.id)
   if (!permissions.can("create", "project")) {
-    return redirect(`/`)
+    return redirect(`/${workspaceSlug}/projects`)
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/projects">
+          <Link href={`/${workspaceSlug}/projects`}>
             <ArrowLeftIcon className="size-4" />
             <span className="sr-only">Back to projects</span>
           </Link>
@@ -28,7 +37,7 @@ export default async function NewProjectPage() {
       </div>
 
       <div className="max-w-2xl">
-        <ProjectForm />
+        <ProjectForm workspaceSlug={workspaceSlug} />
       </div>
     </div>
   )

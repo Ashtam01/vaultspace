@@ -22,13 +22,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { type Document, documentStatuses } from "@/drizzle/schema/document"
+import { type Document, documentStatuses, documentSensitivities } from "@/drizzle/schema"
 import { documentSchema, type DocumentFormValues } from "@/schemas/documents"
 import { createDocumentAction, updateDocumentAction } from "@/actions/documents"
 import { toast } from "sonner"
 
 type DocumentFormProps = {
-  document?: Pick<Document, "id" | "title" | "content" | "status" | "isLocked">
+  document?: Pick<Document, "id" | "title" | "content" | "status" | "isLocked" | "sensitivity">
+  workspaceSlug: string
   projectId: string
   canModify: {
     status: boolean
@@ -38,26 +39,28 @@ type DocumentFormProps = {
 
 export function DocumentForm({
   document,
+  workspaceSlug,
   projectId,
   canModify,
 }: DocumentFormProps) {
   const form = useForm<DocumentFormValues>({
     resolver: zodResolver(documentSchema),
-    defaultValues: document ?? {
-      title: "",
-      content: "",
-      status: "draft",
-      isLocked: false,
+    defaultValues: {
+      title: document?.title ?? "",
+      content: document?.content ?? "",
+      status: document?.status ?? "draft",
+      sensitivity: document?.sensitivity ?? "public",
+      isLocked: document?.isLocked ?? false,
     },
   })
 
   async function handleSubmit(data: DocumentFormValues) {
     const action = document
-      ? updateDocumentAction.bind(null, document.id)
-      : createDocumentAction
+      ? updateDocumentAction.bind(null, workspaceSlug, document.id, projectId)
+      : createDocumentAction.bind(null, workspaceSlug, projectId)
 
-    const res = await action(projectId, data)
-    toast.error(res.message)
+    const res = await action(data)
+    toast.error(res?.message || "An error occurred")
   }
 
   return (
@@ -66,7 +69,7 @@ export function DocumentForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
+            className="space-y-6 pt-6"
           >
             <FormField
               control={form.control}
@@ -96,26 +99,56 @@ export function DocumentForm({
               )}
             />
 
-            {canModify.status && (
+            <div className="grid grid-cols-2 gap-4">
+              {canModify.status && (
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {documentStatuses.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
-                name="status"
+                name="sensitivity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>Sensitivity</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full capitalize">
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {documentStatuses.map(status => (
-                          <SelectItem key={status} value={status}>
-                            {status}
+                        {documentSensitivities.map((s) => (
+                          <SelectItem key={s} value={s} className="capitalize">
+                            {s}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -124,7 +157,7 @@ export function DocumentForm({
                   </FormItem>
                 )}
               />
-            )}
+            </div>
 
             {canModify.isLocked && (
               <FormField

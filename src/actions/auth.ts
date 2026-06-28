@@ -13,7 +13,7 @@ export async function login(data: LoginFormValues) {
   if (user == null) return { message: "User not found" }
 
   await setSession(user.id)
-  return redirect("/projects")
+  return redirect("/workspaces")
 }
 
 export async function logout() {

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,26 +9,34 @@ import { ArrowLeftIcon, LockIcon, PencilIcon } from "lucide-react"
 import { getStatusBadgeVariant } from "@/lib/helpers"
 import { getDocumentWithUserInfoService } from "@/services/document"
 import { getProjectByIdService } from "@/services/projects"
-import { getUserPermissions } from "@/permissions/casl"
+import { getUserWorkspacePermissions } from "@/permissions/casl"
+import { getWorkspaceBySlugService } from "@/services/workspace"
 import { subject } from "@casl/ability"
+import { SensitivityBadge } from "@/components/sensitivity-badge"
 
 export default async function DocumentDetailPage({
   params,
-}: PageProps<"/projects/[projectId]/documents/[documentId]">) {
-  const { projectId, documentId } = await params
-  const project = await getProjectByIdService(projectId)
+}: {
+  params: Promise<{ workspaceSlug: string; projectId: string; documentId: string }>
+}) {
+  const { workspaceSlug, projectId, documentId } = await params
+  
+  const workspace = await getWorkspaceBySlugService(workspaceSlug)
+  if (!workspace) return redirect("/workspaces")
+
+  const project = await getProjectByIdService(workspace.id, projectId)
   if (project == null) return notFound()
 
-  const permissions = await getUserPermissions()
+  const permissions = await getUserWorkspacePermissions(workspace.id)
 
-  const document = await getDocumentWithUserInfoService(documentId)
+  const document = await getDocumentWithUserInfoService(workspace.id, documentId)
   if (document == null) return notFound()
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href={`/projects/${projectId}`}>
+          <Link href={`/${workspaceSlug}/projects/${projectId}`}>
             <ArrowLeftIcon className="size-4" />
             <span className="sr-only">Back to project</span>
           </Link>
@@ -44,6 +52,7 @@ export default async function DocumentDetailPage({
             <Badge variant={getStatusBadgeVariant(document.status)}>
               {document.status}
             </Badge>
+            <SensitivityBadge sensitivity={document.sensitivity} />
             {document.isLocked && <Badge variant="outline">Locked</Badge>}
           </div>
         </div>
@@ -52,7 +61,7 @@ export default async function DocumentDetailPage({
           {permissions.can("update", subject("document", { ...document })) && (
             <Button variant="outline" asChild>
               <Link
-                href={`/projects/${projectId}/documents/${documentId}/edit`}
+                href={`/${workspaceSlug}/projects/${projectId}/documents/${documentId}/edit`}
               >
                 <PencilIcon className="size-4 mr-2" />
                 Edit
@@ -65,7 +74,7 @@ export default async function DocumentDetailPage({
               variant="destructive"
               requireAreYouSure
               areYouSureDescription="This will permanently delete this document. This action cannot be undone."
-              action={deleteDocumentAction.bind(null, documentId, projectId)}
+              action={deleteDocumentAction.bind(null, workspaceSlug, documentId, projectId)}
             >
               Delete
             </ActionButton>

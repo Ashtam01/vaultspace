@@ -6,7 +6,7 @@ export async function createDocument(data: DocumentInsertData) {
   const [document] = await db
     .insert(DocumentTable)
     .values(data)
-    .returning({ id: DocumentTable.id })
+    .returning()
 
   return document
 }
